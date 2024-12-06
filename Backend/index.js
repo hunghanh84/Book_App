@@ -3,34 +3,39 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import bookRoute from "./route/book.route.js";
-import userRoute from "./route/user.route.js";
+import categoryRoute from './route/category.route.js';
+
+import bookRoute from './route/book.route.js';
+import customerRoute from './route/customer.route.js';
+import orderRoute from './route/order.route.js';
+import paymentRoute from './route/payment.route.js';
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Đọc các biến môi trường
 dotenv.config();
 
+// Lấy cổng và URI MongoDB từ file .env
 const PORT = process.env.PORT || 4000;
 const URI = process.env.MongoDBURI;
 
-// connect to mongoDB
-try {
-    mongoose.connect(URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    console.log("Connected to mongoDB");
-} catch (error) {
-    console.log("Error: ", error);
-}
+// Kết nối tới MongoDB
+mongoose.connect(URI)
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((error) => console.log("Error: ", error));
 
-// defining routes
-app.use("/book", bookRoute);
-app.use("/user", userRoute);
-
+// Định nghĩa các routes
+app.use("/api", bookRoute);
+app.use('/api', categoryRoute);
+app.use('/api', bookRoute);
+app.use('/api', customerRoute);
+app.use('/api', orderRoute);
+app.use('/api', paymentRoute);
+// Khởi động server
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });

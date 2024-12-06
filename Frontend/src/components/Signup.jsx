@@ -4,31 +4,36 @@ import Login from "./Login";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
+
 function Signup() {
   const location = useLocation();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/";
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch, // Dùng watch để kiểm tra giá trị của mật khẩu
   } = useForm();
 
   const onSubmit = async (data) => {
-    const userInfo = {
+    const newCustomer = {
       fullname: data.fullname,
       email: data.email,
+      phone: data.phone,
+      address: data.address, // Thêm trường address
       password: data.password,
     };
     await axios
-      .post("http://localhost:4001/user/signup", userInfo)
+      .post("http://localhost:4001/api/signup", newCustomer)
       .then((res) => {
         console.log(res.data);
         if (res.data) {
           toast.success("Signup Successfully");
           navigate(from, { replace: true });
         }
-        localStorage.setItem("Users", JSON.stringify(res.data.user));
+        localStorage.setItem("Customer", JSON.stringify(res.data.customer)); // Đảm bảo tên đúng với backend
       })
       .catch((err) => {
         if (err.response) {
@@ -37,13 +42,14 @@ function Signup() {
         }
       });
   };
+
   return (
     <>
       <div className="flex h-screen items-center justify-center">
         <div className=" w-[600px] ">
           <div className="modal-box">
             <form onSubmit={handleSubmit(onSubmit)} method="dialog">
-              {/* if there is a button in form, it will close the modal */}
+              {/* Close button */}
               <Link
                 to="/"
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -68,6 +74,25 @@ function Signup() {
                   </span>
                 )}
               </div>
+
+              {/* Phone */}
+              <div className="mt-4 space-y-2">
+                <span>Phone</span>
+                <br />
+                <input
+                  type="text"
+                  placeholder="Enter your phone number"
+                  className="w-80 px-3 py-1 border rounded-md outline-none"
+                  {...register("phone", { required: true })}
+                />
+                <br />
+                {errors.phone && (
+                  <span className="text-sm text-red-500">
+                    This field is required
+                  </span>
+                )}
+              </div>
+
               {/* Email */}
               <div className="mt-4 space-y-2">
                 <span>Email</span>
@@ -85,12 +110,31 @@ function Signup() {
                   </span>
                 )}
               </div>
+
+              {/* Address */}
+              <div className="mt-4 space-y-2">
+                <span>Address</span>
+                <br />
+                <input
+                  type="text"
+                  placeholder="Enter your address"
+                  className="w-80 px-3 py-1 border rounded-md outline-none"
+                  {...register("address", { required: true })}
+                />
+                <br />
+                {errors.address && (
+                  <span className="text-sm text-red-500">
+                    This field is required
+                  </span>
+                )}
+              </div>
+
               {/* Password */}
               <div className="mt-4 space-y-2">
                 <span>Password</span>
                 <br />
                 <input
-                  type="text"
+                  type="password"
                   placeholder="Enter your password"
                   className="w-80 px-3 py-1 border rounded-md outline-none"
                   {...register("password", { required: true })}
@@ -102,13 +146,36 @@ function Signup() {
                   </span>
                 )}
               </div>
+
+              {/* Confirm Password */}
+              <div className="mt-4 space-y-2">
+                <span>Confirm Password</span>
+                <br />
+                <input
+                  type="password"
+                  placeholder="Confirm your password"
+                  className="w-80 px-3 py-1 border rounded-md outline-none"
+                  {...register("confirmPassword", {
+                    required: true,
+                    validate: (value) =>
+                      value === watch("password") || "Passwords do not match", // Kiểm tra mật khẩu nhập lại
+                  })}
+                />
+                <br />
+                {errors.confirmPassword && (
+                  <span className="text-sm text-red-500">
+                    {errors.confirmPassword.message || "This field is required"}
+                  </span>
+                )}
+              </div>
+
               {/* Button */}
               <div className="flex justify-around mt-4">
                 <button className="bg-pink-500 text-white rounded-md px-3 py-1 hover:bg-pink-700 duration-200">
                   Signup
                 </button>
                 <p className="text-xl">
-                  Have account?{" "}
+                  Have an account?{" "}
                   <button
                     className="underline text-blue-500 cursor-pointer"
                     onClick={() =>
