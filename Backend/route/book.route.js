@@ -4,8 +4,8 @@ import { createBook, getBooks, updateBook, deleteBook } from '../controller/book
 const router = express.Router();
 
 // API để xử lý sách
-router.post('/book', createBook);
-router.get('/books', getBooks);
+router.post('/bookcr', createBook);
+router.get('/book', getBooks);
 router.put('/book/:id', updateBook);
 router.delete('/book/:id', deleteBook);
 

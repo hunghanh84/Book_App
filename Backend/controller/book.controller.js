@@ -22,8 +22,8 @@ export const createBook = async (req, res) => {
 // Lấy danh sách tất cả sách
 export const getBooks = async (req, res) => {
     try {
-        const books = await Book.find().populate('category');
-        res.status(200).json(books);
+        const book = await Book.find();
+        res.status(200).json(book);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

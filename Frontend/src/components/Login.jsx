@@ -11,12 +11,12 @@ function Login() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const userInfo = {
+    const LoginCustomer = {
       email: data.email,
       password: data.password,
     };
     await axios
-      .post("http://localhost:4001/user/login", userInfo)
+      .post("http://localhost:4001/api/login", LoginCustomer)
       .then((res) => {
         console.log(res.data);
         if (res.data) {
@@ -24,13 +24,13 @@ function Login() {
           document.getElementById("my_modal_3").close();
           setTimeout(() => {
             window.location.reload();
-            localStorage.setItem("Users", JSON.stringify(res.data.user));
+            localStorage.setItem("customer", JSON.stringify(res.data.customer));
           }, 1000);
         }
       })
       .catch((err) => {
         if (err.response) {
-          console.log(err);
+          
           toast.error("Error: " + err.response.data.message);
           setTimeout(() => {}, 2000);
         }
