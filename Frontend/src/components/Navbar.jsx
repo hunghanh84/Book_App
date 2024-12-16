@@ -2,10 +2,13 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import Login from "./Login";
 import Logout from "./Logout";
+import MyCart from "./MyCart";
 import { useAuth } from "../context/AuthProvider";
+import { useCart } from "../context/CartContext";
 
 function Navbar() {
   const [authUser, setAuthUser] = useAuth();
+  const { cartItemCount } = useCart();
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
   );
@@ -45,13 +48,14 @@ function Navbar() {
         <a href="/course">Course</a>
       </li>
       <li>
-        <a>Contact</a>
+        <a href="/order">Order</a>
       </li>
       <li>
         <a>About</a>
       </li>
     </>
   );
+
   return (
     <>
       <div
@@ -162,6 +166,7 @@ function Navbar() {
                 <Login />
               </div>
             )}
+            <MyCart cartItemCount={cartItemCount} />
           </div>
         </div>
       </div>
