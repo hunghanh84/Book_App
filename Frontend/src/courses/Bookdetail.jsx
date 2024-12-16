@@ -31,7 +31,7 @@ function BookDetail() {
           {/* Phần hình ảnh */}
           <div className="md:w-1/3">
           <img 
-              src={`/images/${book.image}`}
+              src={book.image} 
               alt={book.title} 
               className="w-full h-[400px] rounded-lg shadow-lg object-cover"
             //   onError={(e) => {
