@@ -20,6 +20,30 @@ function BookDetail() {
     fetchBook();
   }, [id]);
 
+  const addToCart = () => {
+    const cartItem = {
+      _id: book._id,
+      title: book.title,
+      price: book.price,
+      image: book.image,
+      quantity: 1
+    };
+
+    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    const existingItemIndex = currentCart.findIndex(item => item._id === book._id);
+    
+    if (existingItemIndex !== -1) {
+      currentCart[existingItemIndex].quantity += 1;
+    } else {
+      currentCart.push(cartItem);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(currentCart));
+    
+    alert('Đã thêm vào giỏ hàng!');
+  };
+
   if (!book) return <div>Loading...</div>;
 
   return (
@@ -63,7 +87,10 @@ function BookDetail() {
               </p>
             </div>
 
-            <button className="w-full md:w-auto px-8 py-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition duration-300 font-semibold">
+            <button 
+              onClick={addToCart}
+              className="w-full md:w-auto px-8 py-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition duration-300 font-semibold"
+            >
               Thêm vào giỏ hàng
             </button>
           </div>

@@ -45,7 +45,7 @@ function Navbar() {
         <a href="/book">Course</a>
       </li>
       <li>
-        <a>Contact</a>
+        <a href="/cart">Giỏ hàng</a>
       </li>
       <li>
         <a>About</a>

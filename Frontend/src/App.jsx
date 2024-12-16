@@ -12,6 +12,9 @@ import AdminCategories from "./admin/AdminCategories";
 import CategoryForm from "./admin/CategoryForm";
 import AdminCustomers from "./admin/AdminCustomers";
 import CustomerForm from "./admin/CustomerForm";
+import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
+import AdminOrders from "./admin/AdminOrders";
 
 function App() {
   const [authUser, setAuthUser] = useAuth();
@@ -36,6 +39,9 @@ function App() {
           <Route path="/admin/customers" element={<AdminCustomers />} />
           <Route path="/admin/customers/edit/:id" element={<CustomerForm />} />
           <Route path="/admin/customers/new" element={<CustomerForm />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
         </Routes>
         <Toaster />
       </div>
