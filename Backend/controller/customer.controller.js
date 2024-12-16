@@ -1,5 +1,6 @@
 import Customer from "../model/customer.model.js";
 import bcryptjs from "bcryptjs";
+
 export const signup = async (req, res) => {
     try {
         // Lấy dữ liệu từ body request
@@ -42,6 +43,7 @@ export const signup = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -69,12 +71,15 @@ export const login = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 // Lấy danh sách tất cả khách hàng
 export const getCustomers = async (req, res) => {
     try {
-        const customers = await Customer.find();
+        const customers = await Customer.find().select('-password');
+        console.log("Customers found:", customers);
         res.status(200).json(customers);
     } catch (error) {
+        console.error("Error getting customers:", error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -94,6 +99,54 @@ export const deleteCustomer = async (req, res) => {
     try {
         await Customer.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Customer deleted" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Thêm endpoint để lấy chi tiết customer
+export const getCustomerById = async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" });
+        }
+        // Không trả về password
+        const { password, ...customerData } = customer._doc;
+        res.status(200).json(customerData);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Thêm customer bởi admin
+export const createCustomer = async (req, res) => {
+    try {
+        const { fullname, phone, email, address, password } = req.body;
+
+        // Kiểm tra email tồn tại
+        const existingCustomer = await Customer.findOne({ email });
+        if (existingCustomer) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // Mã hóa mật khẩu
+        const hashedPassword = await bcryptjs.hash(password, 10);
+
+        // Tạo customer mới
+        const customer = new Customer({
+            fullname,
+            email,
+            phone,
+            address,
+            password: hashedPassword
+        });
+
+        await customer.save();
+        
+        // Trả về thông tin không bao gồm password
+        const { password: _, ...customerData } = customer._doc;
+        res.status(201).json(customerData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

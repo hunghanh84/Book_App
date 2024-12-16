@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import categoryRoute from './route/category.route.js';
 
@@ -11,10 +13,15 @@ import orderRoute from './route/order.route.js';
 import paymentRoute from './route/payment.route.js';
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 // Đọc các biến môi trường
 dotenv.config();
@@ -35,6 +42,12 @@ app.use('/api', bookRoute);
 app.use('/api', customerRoute);
 app.use('/api', orderRoute);
 app.use('/api', paymentRoute);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: err.message });
+});
 
 // Khởi động server
 app.listen(PORT, () => {
