@@ -31,11 +31,16 @@ export const getBooks = async (req, res) => {
 
 export const getBookById = async (req, res) => {
     try {
-        const book = await Book.findById(req.params.id);
+        const book = await Book.findById(req.params.id)
+                             .populate('category');
         if (!book) {
             return res.status(404).json({ message: "Book not found" });
         }
-        res.status(200).json(book);
+        const bookData = {
+            ...book._doc,
+            image: `/course/${book.image}`
+        };
+        res.status(200).json(bookData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
